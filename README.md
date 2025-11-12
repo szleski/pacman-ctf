@@ -17,6 +17,22 @@ Pieter Abbeel (pabbeel@cs.berkeley.edu).
 This version (cshelton/pacman-ctf github repo) was modified by Christian
 Shelton (cshelton@cs.ucr.edu) on June 23, 2020 to run under Python 3.
 
+**Pygame Migration (2025):** The graphics system has been migrated from Tcl/Tk to pygame for better compatibility with Windows 11 and modern environments. See [PYGAME_MIGRATION.md](PYGAME_MIGRATION.md) for details.
+
+## Installation
+
+### Prerequisites
+- Python 3.x
+- pip
+
+### Setup
+```bash
+# Install required dependencies
+pip install -r requirements.txt
+
+# Or install pygame directly
+pip install pygame
+```
 
 ## Getting Started
 (much of this is from the original HTML documentation, in origdoc/)
