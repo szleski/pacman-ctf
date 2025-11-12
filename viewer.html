@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacman CTF Replay Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ffff00;
+        }
+        
+        #controls {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            margin: 10px 0;
+        }
+        
+        label {
+            display: inline-block;
+            width: 100px;
+            font-weight: bold;
+        }
+        
+        select, button, input[type="range"] {
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 4px;
+            border: none;
+            font-size: 14px;
+        }
+        
+        button {
+            background-color: #0066ff;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background-color: #0052cc;
+        }
+        
+        button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+        
+        #canvas-container {
+            background-color: #000;
+            border: 3px solid #0066ff;
+            border-radius: 8px;
+            padding: 10px;
+            display: inline-block;
+            margin: 0 auto;
+        }
+        
+        canvas {
+            display: block;
+            background-color: #000;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        
+        #info {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .info-section {
+            flex: 1;
+            padding: 0 10px;
+        }
+        
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .red { color: #ff0000; }
+        .blue { color: #0099ff; }
+        
+        #speed-control {
+            width: 200px;
+        }
+        
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>🎮 Pacman CTF Replay Viewer</h1>
+        
+        <div id="controls">
+            <div class="control-group">
+                <label>Replay File:</label>
+                <select id="replay-select">
+                    <option value="">Loading...</option>
+                </select>
+                <button id="load-btn">Load</button>
+            </div>
+            
+            <div class="control-group center">
+                <button id="first-btn" disabled>⏮️ First</button>
+                <button id="prev-btn" disabled>⏪ Prev</button>
+                <button id="play-btn" disabled>▶️ Play</button>
+                <button id="next-btn" disabled>⏩ Next</button>
+                <button id="last-btn" disabled>⏭️ Last</button>
+            </div>
+            
+            <div class="control-group">
+                <label>Speed:</label>
+                <input type="range" id="speed-control" min="1" max="10" value="5" step="1">
+                <span id="speed-value">5 fps</span>
+            </div>
+            
+            <div class="control-group">
+                <label>Frame:</label>
+                <input type="range" id="frame-slider" min="0" max="0" value="0" step="1" disabled>
+                <span id="frame-info">0 / 0</span>
+            </div>
+        </div>
+        
+        <div class="center">
+            <div id="canvas-container">
+                <canvas id="game-canvas" width="800" height="600"></canvas>
+            </div>
+        </div>
+        
+        <div id="info">
+            <div class="info-section">
+                <h3 class="red">Red Team</h3>
+                <div id="red-team-name">-</div>
+                <div class="score red" id="red-score">0</div>
+            </div>
+            <div class="info-section center">
+                <h3>Game Info</h3>
+                <div id="game-status">No replay loaded</div>
+            </div>
+            <div class="info-section" style="text-align: right;">
+                <h3 class="blue">Blue Team</h3>
+                <div id="blue-team-name">-</div>
+                <div class="score blue" id="blue-score">0</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="replay_viewer.js"></script>
+</body>
+</html>
