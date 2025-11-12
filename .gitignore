@@ -30,3 +30,9 @@ wheels/
 # OS
 .DS_Store
 Thumbs.db
+
+# Test/debug files
+game_screenshot.png
+*_screenshot.py
+capture_screenshot.py
+take_screenshot.py
