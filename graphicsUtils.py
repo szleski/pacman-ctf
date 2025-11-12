@@ -200,17 +200,53 @@ def _draw_object(obj_id):
     elif obj['type'] == 'circle':
         pos = (int(obj['x']), int(obj['y']))
         r = int(obj['r'])
-        if obj['fill'] is not None:
-            pygame.draw.circle(_screen, obj['fill'], pos, r)
-        if obj['width'] > 0 and obj['outline'] is not None:
-            pygame.draw.circle(_screen, obj['outline'], pos, r, obj['width'])
 
-        # Handle arc drawing for endpoints
-        if obj.get('endpoints') is not None:
-            start_angle = math.radians(obj['endpoints'][0])
-            end_angle = math.radians(obj['endpoints'][1])
-            rect = pygame.Rect(pos[0] - r, pos[1] - r, 2*r, 2*r)
-            pygame.draw.arc(_screen, obj['outline'], rect, start_angle, end_angle, obj['width'])
+        # Handle pieslice (pac-man) drawing with endpoints
+        if obj.get('endpoints') is not None and obj.get('style') == 'pieslice':
+            # Convert endpoints to start and end angles (in degrees)
+            start_angle = obj['endpoints'][0]
+            end_angle = obj['endpoints'][1]
+
+            # Normalize angles so end > start
+            while end_angle < start_angle:
+                end_angle += 360
+
+            # Convert to radians
+            # Note: In screen coordinates, Y increases downward, so we negate Y in sin
+            # to match tkinter's behavior
+            start_rad = math.radians(start_angle)
+            end_rad = math.radians(end_angle)
+
+            # Create polygon points for the pie slice
+            points = [pos]  # Center point
+
+            # Calculate arc points
+            num_points = max(2, int(abs(end_angle - start_angle) / 5))  # More points for smoother arc
+            for i in range(num_points + 1):
+                angle = start_rad + (end_rad - start_rad) * i / num_points
+                # Standard polar to cartesian, but negate y component for screen coordinates
+                x = pos[0] + r * math.cos(angle)
+                y = pos[1] - r * math.sin(angle)  # Negative because Y increases downward
+                points.append((x, y))
+
+            # Draw filled pie slice
+            if obj['fill'] is not None and len(points) > 2:
+                pygame.draw.polygon(_screen, obj['fill'], points)
+
+            # Draw outline
+            if obj['width'] > 0 and obj['outline'] is not None:
+                # Draw the arc edge
+                if len(points) > 2:
+                    pygame.draw.lines(_screen, obj['outline'], False, points[1:], obj['width'])
+                    # Draw lines from center to arc endpoints (the "mouth" edges)
+                    pygame.draw.line(_screen, obj['outline'], points[0], points[1], obj['width'])
+                    pygame.draw.line(_screen, obj['outline'], points[0], points[-1], obj['width'])
+        else:
+            # Regular circle (for ghosts when not pac-man)
+            if obj['fill'] is not None:
+                pygame.draw.circle(_screen, obj['fill'], pos, r)
+            if obj['width'] > 0 and obj['outline'] is not None:
+                pygame.draw.circle(_screen, obj['outline'], pos, r, obj['width'])
 
     elif obj['type'] == 'line':
         pygame.draw.line(_screen, obj['color'], obj['start'], obj['end'], obj['width'])
